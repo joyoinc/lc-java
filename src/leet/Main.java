@@ -65,11 +65,4 @@ public class Main {
 		System.out.println("end");
 		
 	}
-	
-//	static void printArray(int [] array) {
-//		for(int i : array) {
-//			System.out.println(i);
-//		}
-//	}
-
 }

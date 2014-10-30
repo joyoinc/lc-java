@@ -3,15 +3,7 @@ package leet;
 import java.util.*;
 
 import leet.util.ArrayIndexComparator;
-
-class ListNode {
-     int val;
-     ListNode next;
-     ListNode(int x) {
-         val = x;
-         next = null;
-     }
-}
+import leet.util.ListNode;
 
 class Interval {
 	int start;
@@ -490,25 +482,6 @@ public class Solution {
     	return maxPos >= n-1;
     }
     
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-    	return helper(l1, l2, 0);
-    }
-    
-    private ListNode helper(ListNode l1, ListNode l2, int carry) {
-    	if(l1==null && l2==null && carry==0)
-    		return null;
-    	int v1 = l1 == null ? 0 : l1.val;
-    	int v2 = l2 == null ? 0 : l2.val;
-    	ListNode sum = new ListNode(v1+v2+carry);
-    	carry = sum.val / 10;
-    	sum.val %= 10 ;
-    	
-    	sum.next = helper(l1 == null ? null : l1.next , l2 == null ? null : l2.next, carry);
-
-    	return sum;
-    }
-
-    
     List<String> validIps;
     List<String[]> nQueens;
     
@@ -608,5 +581,87 @@ public class Solution {
 		max = Math.max(max, s.length() - start);
 		
 		return max;
+    }
+	
+	public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    	return addTwoNumbersHelper(l1, l2, 0);
+    }
+    
+    private ListNode addTwoNumbersHelper(ListNode l1, ListNode l2, int carry) {
+    	if(l1==null && l2==null && carry==0)
+    		return null;
+    	int v1 = l1 == null ? 0 : l1.val;
+    	int v2 = l2 == null ? 0 : l2.val;
+    	ListNode sum = new ListNode(v1+v2+carry);
+    	carry = sum.val / 10;
+    	sum.val %= 10 ;
+    	
+    	sum.next = addTwoNumbersHelper(l1 == null ? null : l1.next , l2 == null ? null : l2.next, carry);
+
+    	return sum;
+    }
+    
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        if(n<2) 
+        	return s;
+        char[] chs = new char[2*n+1];
+        for(int i=0; i<n; i++) {
+        	chs[2*i+1] = s.charAt(i);
+        }
+        
+        int posCenter =0;
+        int maxRadius = 0;
+        for(int pos=0; pos<chs.length; pos++) {
+        	int step = 0;
+        	for(; pos-step >=0 && pos+step < chs.length 
+        			&& chs[pos-step] == chs[pos+step]; step++ );
+        	
+        	if(step-1 > maxRadius) {
+        		maxRadius = step-1;
+        		posCenter = pos;
+        	}
+        }
+        
+        StringBuffer buf = new StringBuffer();
+        for(int i=posCenter-maxRadius; i<=posCenter+maxRadius; i++) {
+        	if(chs[i] != 0)
+        		buf.append(chs[i]);
+        }
+        return buf.toString();
+    }
+    
+    public String convert(String s, int nRows) {
+		char[] chs = s.toCharArray();
+        int n = s.length();
+        if(n < 3 || nRows <2)
+            return s;
+        
+        int colSize = (2*nRows-2);
+        int nCols = n / colSize;
+        if( n - nCols *colSize > 0 )
+        	nCols++;
+        StringBuffer[] bufs = new StringBuffer[nRows];
+        for(int i=0; i<nRows; i++)
+        	bufs[i] = new StringBuffer(2*nCols);
+
+        for(int col=0; col< nCols; col++) {
+        	int base = col * colSize;
+        	for(int i=0; i<nRows; i++) {
+        		if(base+i < n) {
+        			bufs[i].append(chs[base+i]);
+        		}
+        	}
+        	
+        	for(int i=nRows-2; i>0; i--) {
+        		if(base+colSize-i < n) {
+        			bufs[i].append(chs[base+colSize-i]);
+        		}
+        	}
+        }
+        for(int i=1; i<nRows; i++)
+        	bufs[0].append(bufs[i]);
+        
+        return bufs[0].toString();
     }
  }
