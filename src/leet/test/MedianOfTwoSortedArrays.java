@@ -1,15 +1,15 @@
-package leet;
+package leet.test;
 
 import static org.junit.Assert.*;
+import leet.*;
 
 import org.junit.Test;
 
-public class MedianOfTwoSortedArrays implements ILeetCodeProblemTest{
+public class MedianOfTwoSortedArrays  {
 
 	@Test
-	public void validate() {
+	public void test() {
 		Solution sol = new Solution();
-		double delta = 0.00001;
 		
 		double res;
 		int[] A;
@@ -19,7 +19,7 @@ public class MedianOfTwoSortedArrays implements ILeetCodeProblemTest{
 		A = new int[] {2, 7, 11, 15};
 		B = new int[] {9};
 		res = 9;
-		assertEquals(res, sol.findMedianSortedArrays(A, B), delta);
+		assertEquals(res, sol.findMedianSortedArrays(A, B), Setting.delta);
 	}
 
 }

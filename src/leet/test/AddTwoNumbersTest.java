@@ -1,17 +1,15 @@
-package leet;
+package leet.test;
 
 import static org.junit.Assert.*;
-
-import javax.management.ListenerNotFoundException;
-
+import leet.Solution;
 import leet.util.ListNode;
 
 import org.junit.Test;
 
-public class AddTwoNumbersTest implements ILeetCodeProblemTest {
+public class AddTwoNumbersTest   {
 
 	@Test
-	public void validate() {
+	public void test() {
 		Solution sol = new Solution();
 		
 		ListNode res;

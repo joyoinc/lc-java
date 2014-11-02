@@ -4,6 +4,7 @@ import java.util.*;
 
 import leet.util.ArrayIndexComparator;
 import leet.util.ListNode;
+import leet.util.NodeKeyComparator;
 
 class Interval {
 	int start;
@@ -79,6 +80,169 @@ public class Solution {
         tbl[idx1][idx2][len] =  res;
         return res;
     }
+    
+    public double pow(double x, int n) {
+        if(n==0) return 1;
+    	long ln = (long) n;
+        boolean neg = false;
+        if(n<0) {
+        	neg = true; 
+        	ln = -ln; 
+        }
+        
+        double res = 1.0;
+        for (double f = x; ln > 0; ln = ln >> 1) {
+            if (ln % 2 == 1) {
+                res *= f;
+            }
+            f = f * f;
+        }
+        return neg ? 1 / res : res;
+    }
+    
+    public int maxArea(int[] height) {
+        int n = height.length;
+        if(n < 2) 
+        	return 0;
+        int max = 0;
+        for(int l=0, r=n-1; l<r; ) {
+        	int h, w = r-l;
+        	if(height[l] < height[r]) {
+        		h = height[l];
+        		l++;
+        	} else {
+        		h = height[r];
+        		r--;
+        	}
+        	
+        	int area = h*w;
+        	if(area > max)
+        		max = area;
+        }
+        return max;
+    }
+    
+    String[] ones = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+    String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
+    String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM" };
+    String[] thousands = {"", "M", "MM", "MMM" };
+    String roman;
+    public String intToRoman(int num) {
+
+		StringBuffer buf = new StringBuffer();
+		
+		buf.append(thousands[(num / 1000)]);
+		num %= 1000;
+		
+		buf.append(hundreds[(num / 100)]);
+		num %= 100;
+		
+		buf.append(tens[(num / 10)]);
+		num %= 10;
+		
+		buf.append(ones[(num)]);
+		
+		return buf.toString();
+    }
+    
+    public int romanToInt(String s) {
+    	roman = s;
+        return 1000 * parseThousands(roman) + 100 * parseHundreds(roman) + 10 * parseTens(roman) + parseOnes(roman);
+    }
+
+	private int parseOnes(String s) {
+		if(s.startsWith("I") || s.startsWith("V")) {
+			int i=0;
+			String patten = "IVX";
+			for(;i<s.length() && patten.indexOf(s.charAt(i))>=0; i++);
+			String str = s.substring(0, i);
+			roman = s.substring(i);
+			for(int j=1; j<10; j++)
+				if(ones[j].equals(str))
+					return j;
+					
+		}
+		return 0;
+	}
+
+	private int parseTens(String s) {
+		if(s.startsWith("X") || s.startsWith("L")) {
+			int i=0;
+			String patten = "XLC";
+			for(;i<s.length() && patten.indexOf(s.charAt(i))>=0; i++);
+			String str = s.substring(0, i);
+			roman = s.substring(i);
+			for(int j=1; j<10; j++)
+				if(tens[j].equals(str))
+					return j;
+					
+		}
+		return 0;
+	}
+
+	private int parseHundreds(String s) {
+		if(s.startsWith("C") || s.startsWith("D")) {
+			int i=0;
+			String patten = "CDM";
+			for(;i<s.length() && patten.indexOf(s.charAt(i))>=0; i++);
+			String str = s.substring(0, i);
+			roman = s.substring(i);
+			for(int j=1; j<10; j++)
+				if(hundreds[j].equals(str))
+					return j;
+					
+		}
+		return 0;
+	}
+
+	private int parseThousands(String s) {
+		if(s.startsWith("M")) {
+			int i=0;
+			String patten = "M";
+			for(;i<s.length() && patten.indexOf(s.charAt(i))>=0; i++);
+			roman = s.substring(i);
+			return i;
+		}
+		return 0;
+	}
+	
+	public String longestCommonPrefix(String[] strs) {
+        if(strs.length == 0)
+        	return "";
+        char[] chs = strs[0].toCharArray();
+        int end = chs.length;
+        for(int i=1; i<strs.length; i++) {
+        	int j = 0;
+        	for(; j<end && j<strs[i].length() && chs[j] == strs[i].charAt(j); j++);
+        	end = Math.min(j, end);
+        }
+        StringBuffer buf = new StringBuffer();
+        buf.append(chs, 0, end);
+        return buf.toString();
+    }
+	
+	public List<List<Integer>> threeSum(int[] num) {
+		 List<Integer> re;
+		 Arrays.sort(num);
+		 HashSet<List<Integer>> nodup = new HashSet<List<Integer>>();
+		 for(int i=0; i<num.length; i++) {
+			 int target = 0 - num[i];
+			 int s, e;
+			 for(s=i+1, e=num.length-1; s<e; ) {
+				 if(num[s] + num[e] < target) s++;
+				 else if(num[s] + num[e] > target) e--;
+				 else {
+					 re = Arrays.asList(new Integer[] { num[i], num[s], num[e] });
+					 nodup.add(re);
+					 s++; e--;
+				 }
+			 }
+		 }
+		 
+		 List<List<Integer>> res = new ArrayList<List<Integer>>(nodup);
+		 
+		 return res;
+    }
 	
 	public boolean isMatch(String s, String p) {
         char [] str, pat;
@@ -124,22 +288,122 @@ public class Solution {
         if(down < 0) { neg = ! neg; down = - down; }
         // now up,down is +
         long res = 0;
-        int shift = 0;
-        while(up >= (down << shift)) {
-            shift++;
-        }
-        shift--;
-        //  up in [down<<sh, down<<sh+1)
-        while(up >= down) {
-            res += 0x1 << shift;
-            up -= down << shift;
-            shift--;
+        long remain = 0;
+        for(int i=31; i>=0; i--) {
+        	res <<= 1;
+        	remain <<= 1;
+        	remain += (up >> i) & 0x1;
+        	if(remain >= down) {
+        		res += 1;
+        		remain -= down;
+        	}
         }
         
         if(neg) res = -res;
         // check overflow
         return (int) res;
     }
+	
+	public ListNode mergeKLists(List<ListNode> lists) {
+
+    	ListNode head = new ListNode(0);
+    	ListNode tail = head;
+    	
+    	Comparator<ListNode> comparator = new NodeKeyComparator();
+    	
+    	PriorityQueue<ListNode> queue = new PriorityQueue<ListNode>(lists.size()+1, comparator);
+    	for(ListNode node : lists) {
+    		if(node != null)
+    			queue.add(node);
+    	}
+    	
+    	while(!queue.isEmpty()) {
+    		ListNode node = queue.poll();
+    		tail.next = node;
+    		tail = node;
+    		
+    		if(node.next != null)
+    			queue.add(node.next);
+    	}
+    	
+    	return head.next;
+    }
+	
+	public ListNode swapPairs(ListNode head) {
+        ListNode sen = new ListNode(0);
+        sen.next = head;
+        ListNode tail = sen;
+        ListNode n, nn;
+        n = head == null ? null : head.next;
+        while(n != null) {
+        	nn = n.next;
+        	tail.next = n;
+        	n.next = head;
+        	head.next = nn;
+        	tail = head;
+        	head = nn;
+        	n = head == null ? null : head.next;
+        }
+        
+        return sen.next;
+    }
+	
+	public ListNode reverseKGroup(ListNode head, int k) {
+		ListNode sen = new ListNode(0);
+        sen.next = head;
+        ListNode tail = sen;
+        ListNode groupStart = head;
+        ListNode groupEnd, originStart;
+        while(groupStart != null) {
+            int cnt = 0;
+        	for(groupEnd=groupStart; cnt < k && groupEnd != null; cnt++, groupEnd = groupEnd.next);
+        	if(cnt == k) {
+        		originStart = groupStart;
+        		while(groupStart != groupEnd) {
+        			head = groupStart;
+        			groupStart = groupStart.next;
+        			head.next = tail.next;
+        			tail.next = head;
+        		}
+        		tail = originStart;
+        		tail.next = groupStart;
+        	} else {
+        	    break;
+        	}
+        }
+        
+        return sen.next;
+    }
+	
+	public List<String> letterCombinations(String digits) {
+		String[] dict = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv" , "wxyz" };
+		List<String> result = new ArrayList<String>();
+        int n = digits.length();
+        if(n>0) {
+        	char[] work = new char[n];
+        	letterCombinationsHelper(digits, 0, work, result, dict);
+        } else {
+        	result.add("");
+        }
+        return result;
+    }
+	
+	private void letterCombinationsHelper(String digits, int currentPos, char[] work, List<String> result, String[] dict) {
+		if(currentPos == digits.length()) {
+			result.add(String.copyValueOf(work));
+			return;
+		}
+		int digit = digit2int(digits.charAt(currentPos));
+		String str = dict[digit];
+		for(char ch : str.toCharArray()) {
+			work[currentPos] = ch;
+			letterCombinationsHelper(digits, currentPos+1, work, result, dict);
+		}
+	}
+	
+	private int digit2int(char digit) {
+		return digit - '0';
+	}
 	
 	public String multiply(String num1, String num2) {
         if(num1.length() > num2.length())
@@ -664,4 +928,5 @@ public class Solution {
         
         return bufs[0].toString();
     }
+    
  }

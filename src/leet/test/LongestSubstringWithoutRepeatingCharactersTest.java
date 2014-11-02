@@ -1,13 +1,14 @@
-package leet;
+package leet.test;
 
 import static org.junit.Assert.*;
+import leet.Solution;
 
 import org.junit.Test;
 
-public class LongestSubstringWithoutRepeatingCharactersTest implements ILeetCodeProblemTest{
+public class LongestSubstringWithoutRepeatingCharactersTest  {
 
 	@Test
-	public void validate() {
+	public void test() {
 		Solution sol = new Solution();
 		int res;
 		String s;

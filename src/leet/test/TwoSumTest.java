@@ -1,13 +1,14 @@
-package leet;
+package leet.test;
 
 import static org.junit.Assert.*;
+import leet.Solution;
 
 import org.junit.Test;
 
-public class TwoSumTest implements ILeetCodeProblemTest {
+public class TwoSumTest   {
 
 	@Test
-	public void validate() {
+	public void test() {
 		Solution sol = new Solution();
 		
 		int[] res;

@@ -1,14 +1,13 @@
-package leet;
+package leet.test;
 
 import static org.junit.Assert.*;
-import leet.util.ListNode;
-
+import leet.Solution;
 import org.junit.Test;
 
-public class ZigZagConversionTest implements ILeetCodeProblemTest{
+public class ZigZagConversionTest  {
 
 	@Test
-	public void validate() {
+	public void test() {
 
 		Solution sol = new Solution();
 		

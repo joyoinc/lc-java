@@ -9,21 +9,6 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-
-//		Class17 c = new Class17();
-//		c.letterCombinations("2");
-		
-//		Class22 c = new Class22();
-//		List<ListNode> list = new ArrayList<ListNode>();
-//		list.add(new ListNode(1));
-//		list.add(new ListNode(3));
-//		System.out.println( c.mergeKLists(list));
-		
-//		Class24 c = new Class24();
-//		ListNode n1 = new ListNode(1);
-//		n1.next = new ListNode(2);
-//		c.reverseKGroup(n1, 2);
-		
 //		Class29 c = new Class29();
 //		String[] L = {"a"};
 //		c.findSubstring("a", L);
@@ -58,11 +43,6 @@ public class Main {
 //
 //		int[] height = {5,4,1,2};
 //		boolean res = sol.isScramble("abc", "bca");
-		
-		System.out.println("Start to test solution for LeetCode problems:");
-		Problems problems = new Problems();
-		problems.validateAll();
-		System.out.println("end");
 		
 	}
 }
