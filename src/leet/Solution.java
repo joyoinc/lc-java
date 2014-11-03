@@ -244,7 +244,30 @@ public class Solution {
 		 return res;
     }
 	
-	public boolean isMatch(String s, String p) {
+
+    public boolean isMatchRegex(String s, String p) {
+    	if(p.length()==0) return s.length()==0;
+    	
+    	if(p.length()>1 && p.charAt(1)=='*') {
+    		if(isMatchRegex(s, p.substring(2))) return true;
+    		for(int i=0; i<s.length() && isMatchSingle(s.substring(i), p); i++) {
+    			if(isMatchRegex(s.substring(i+1), p.substring(2)))
+    				return true;
+    		}
+    	} else {
+    		return isMatchSingle(s, p) ? isMatchRegex(s.substring(1), p.substring(1)) : false;
+    	}
+    	return false;
+    }
+    
+    private boolean isMatchSingle(String s, String p) {
+    	return s.length()>0 && p.length()>0 
+    		? p.charAt(0) == '.' || p.charAt(0) == s.charAt(0)
+    		: s.length() == p.length();
+    }
+    
+
+	public boolean isMatchWildcard(String s, String p) {
         char [] str, pat;
         int m, n, i, j;
         str = s.toCharArray();
@@ -600,6 +623,92 @@ public class Solution {
     		A[lastPos--] = B[n-1]; n--;
     	}
     }
+    
+    public boolean isValid(String s) {
+        int n = s.length();
+        char[] chs = new char[n+1];
+        chs[0] = '#'; n = 1;
+        for(int i=0; i<s.length(); i++) {
+        	char ch = s.charAt(i);
+        	if( chs[n-1]=='(' &&ch==')' 
+   			||  chs[n-1]=='[' &&ch==']'
+   			|| 	chs[n-1]=='{' &&ch=='}'
+   			)  	n--;
+        	else {
+        		chs[n++] = ch;
+        	}
+        }
+        return n==1;
+    }
+    
+    public List<String> generateParenthesis(int n) {
+		List<String> result = new ArrayList<String>();
+		generateParenthesisHelper(n, n, "", result);
+        return result;
+    }
+	
+	private void generateParenthesisHelper(int leftRemain, int rightRemain, String current, List<String> result) {
+		if(rightRemain == 0) {
+			result.add(current);
+			return;
+		}
+		
+		if(leftRemain == 0) {
+			generateParenthesisHelper(0, rightRemain-1, current + ")", result);
+		} else {
+			generateParenthesisHelper(leftRemain-1, rightRemain, current + "(", result);
+			
+			if(leftRemain < rightRemain)
+				generateParenthesisHelper(leftRemain, rightRemain-1, current + ")", result);
+		}
+	}
+	
+	public List<String> wordBreak(String s, Set<String> dict) {
+        List<String> results = new ArrayList<String>();
+        HashMap<String, List<String>> tbl = new HashMap<String, List<String>>();
+        results = wordBreakDP(s, dict, tbl);
+        List<String> results2 = new ArrayList<String>();
+        for(String str : results) {
+        	results2.add(str.substring(0, str.length()-2));
+        }
+        return results2;
+    }
+	
+	private List<String> wordBreakDP(String s, Set<String> dict, HashMap<String, List<String>> tbl) {
+		if(tbl.containsKey(s)) {
+			return tbl.get(s);
+		}
+		
+		List<String> results = new ArrayList<String>(); 
+		tbl.put(s, results);
+		if(0!=s.length()) {
+			for(int i=s.length(); i>0; i--) {
+				String first = s.substring(0, i);
+				String rest = s.substring(i);
+				if(dict.contains(first)) {
+					List<String> others = wordBreakDP(rest, dict, tbl);
+					for(int j=0; j<others.size(); j++) {
+						String result = first;
+						result += " " + others.get(j);
+						results.add(result);
+					}
+				}
+			}
+		}
+		else {
+			results.add("$");
+		}
+		
+		return results;
+	}
+	
+	public int removeElement(int[] A, int elem) {
+        int i, j;
+        for(i=j=0; i<A.length; i++) {
+        	if(A[i]!=elem) A[j++] = A[i];
+        }
+        return j;
+    }
 
 	public int lengthOfLastWord(String s) {
 		char[] chs = s.toCharArray();
@@ -744,6 +853,16 @@ public class Solution {
     			break;
     	}
     	return maxPos >= n-1;
+    }
+    
+    
+    public int removeDuplicates(int[] A) {
+    	if(A.length<2) return A.length;
+    	int i,j;
+    	for(i=j=1; i<A.length; i++) {
+    		if(A[i] != A[j-1]) A[j++] = A[i];
+    	}
+    	return j;
     }
     
     List<String> validIps;
