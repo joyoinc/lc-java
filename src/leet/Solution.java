@@ -2,9 +2,7 @@ package leet;
 
 import java.util.*;
 
-import leet.util.ArrayIndexComparator;
-import leet.util.ListNode;
-import leet.util.NodeKeyComparator;
+import leet.util.*;
 
 class Interval {
 	int start;
@@ -18,21 +16,6 @@ class Interval {
 	Interval(int s, int e) {
 		start = s;
 		end = e;
-	}
-}
-
-class Point {
-	int x;
-	int y;
-
-	Point() {
-		x = 0;
-		y = 0;
-	}
-
-	Point(int a, int b) {
-		x = a;
-		y = b;
 	}
 }
 
@@ -298,7 +281,133 @@ public class Solution {
         return j==n;
         
     }
+	
+
+	private int gcd(int a, int b) {
+		if(0==a) return b;
+		return gcd(b % a, a);
+	}
+	
+	public int maxPoints(Point[] points) {
+		
+		HashMap<Integer, HashMap<Integer, Integer>> map = new HashMap<Integer, HashMap<Integer, Integer>>();
+		int i,j;
+		int kx, ky, max, dup, cnt;
+		max = 0;
+		for(i=0; i<points.length; i++) {
+			dup = cnt = 0;
+			map.clear();
+			
+			for(j=i+1; j<points.length; j++) {
+				if(points[i].x == points[j].x && points[i].y == points[j].y ) {
+					dup++;
+					continue;
+				}
+				if(points[i].x == points[j].x) {
+					kx = points[i].x;
+					ky = 0;
+				}
+				else if(points[i].y == points[j].y) {
+					ky = points[i].y;
+					kx = 0;
+				} else {
+					int a = points[i].x - points[j].x;
+					int b = points[i].y - points[j].y;
+					int c = gcd(a, b);
+					kx = a/c;
+					ky = b/c;
+				}
+				
+				HashMap<Integer, Integer> v1;
+				Integer v2;
+				if((v1 = map.get(kx)) == null ) {
+					v1 = new HashMap<Integer, Integer>();
+					map.put(kx, v1);
+					v2 = 1;
+				} else if((v2 = v1.get(ky)) == null) {
+					v2 = 1;
+				} else {
+					v2 += 1;
+				}
+				v1.put(ky, v2);
+				cnt = Math.max(cnt, v2);
+			}
+			
+			max = Math.max(max, cnt+dup+1);
+		}
+		
+		return max;
+    }
     
+	public List<Integer> findSubstring(String S, String[] L) {
+        List<Integer> res = new ArrayList<Integer>();
+        int n = L.length;
+        if(n==0) return res;
+        int m = L[0].length();
+        if(m==0) return res;
+        
+        HashMap<String, Integer> hash = new HashMap<String, Integer>();
+        for(String str: L) {
+        	Integer cnt = hash.get(str);
+        	if(null == cnt) cnt = 0;
+        	hash.put(str, cnt+1);
+        }
+        
+        int i;
+        for(i=0; i+m*n <= S.length(); i++) {
+        	if(findSubstringHelper(S, i, m, n, hash)) {
+        		res.add(i);
+        	}
+        }
+        
+        return res;
+    }
+	
+	private boolean findSubstringHelper(String S, int start, int wordLen, int wordRemain, HashMap<String, Integer> hash) {
+		if(wordRemain==0)
+			return true;
+		
+		String str = S.substring(start, start + wordLen);
+		Integer cnt = hash.get(str);
+		if(cnt==null || cnt==0) {
+			return false;
+		} else {
+			hash.put(str, cnt-1);
+			boolean res = findSubstringHelper(S, start+wordLen, wordLen, wordRemain-1, hash);
+			hash.put(str, cnt);
+			return res;
+		}
+	}
+	
+	public void nextPermutation(int[] num) {
+        int i, j, n;
+        n = num.length;
+        if(n<2) return;
+        for(i=n-1; i-1>=0 && num[i-1]>=num[i]; i--);
+        if(i==0) {
+        	reverse(num, 0, n-1);
+        } else {
+        	reverse(num, i, n-1);
+        	j = i-1;
+        	for(; i<n && num[i] <= num[j]; i++);
+        	swap(num, i, j);
+        }
+    }
+	
+	private void swap(int[] array, int i, int j) {
+		if(i==j) return;
+		array[i] = array[i] ^ array[j];
+		array[j] = array[j] ^ array[i];
+		array[i] = array[i] ^ array[j];
+	}
+	
+	private void reverse(int[] array, int i, int j) {
+		if(i>j) reverse(array, j, i);
+		while(i<j) {
+			swap(array, i, j);
+			i++; j--;
+		}
+	}
 	
 	public int divide(int dividend, int divisor) {
         if(divisor==0) return 0; // math error
@@ -536,25 +645,6 @@ public class Solution {
 		return results;
     }
 	
-	private void swap(int i, int j) {
-		swap(i,j,input);
-	}
-	
-	private void reverse(int start, int end) {
-		reverse(start, end, input);
-	}
-	
-	private void swap(int i, int j, int[] array) {
-		if(i==j) return;
-		int t = array[i];array[i] = array[j]; array[j] = t;
-	}
-	
-	private void reverse(int start, int end, int[] array) {
-		int s, e;
-		for(s=start, e=end; s<e; s++, e--)
-			swap(s,e-1,array);
-	}
-	
 	public int trap(int[] A) {
         input = A;
 		n = A.length;
@@ -745,10 +835,6 @@ public class Solution {
 		return validIps;
     }
 	
-	private int gcd(int a, int b) {
-		if(0==a) return b;
-		return gcd(a % b, a);
-	}
 	
 	private boolean isValidNQ(int last) {
 		int i, j;
